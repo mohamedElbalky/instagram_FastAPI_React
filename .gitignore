@@ -163,6 +163,9 @@ cython_debug/
 #.idea/
 
 
+# upload image folder
+backend/src/images
+
 
 # ------------- react -------------------------
 .DS_STORE
@@ -209,3 +212,4 @@ packages/react-devtools-timeline/dist
 
 
 NOTES
+

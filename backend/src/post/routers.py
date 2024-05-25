@@ -1,5 +1,8 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+import string
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+import random
+import shutil
 
 from sqlalchemy.orm.session import Session
 
@@ -31,3 +34,20 @@ def create_new_post(request: PostCreate, db: Session = Depends(get_db)):
 @router.get('', response_model=List[PostDsiplay])
 def read_all_posts(skip: int = 0, limit: int = 3, db: Session = Depends(get_db)):
     return get_all_posts(db=db, skip=skip, limit=limit)
+
+
+@router.post("/image")
+def upload_image(image: UploadFile = File(...)):
+    """upload new image anf save"""
+    letters = string.ascii_letters
+    rand_str = "".join(random.choice(letters) for i in range(6))
+    new = f"_{rand_str}."
+    
+    filename = new.join(image.filename.rsplit(".", 1))
+    
+    path = f"images/{filename}"
+    
+    with open(path, "w+b") as buffer:
+        shutil.copyfileobj(image.file, buffer)
+
+    return {"filename": path}
