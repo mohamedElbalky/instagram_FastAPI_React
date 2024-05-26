@@ -5,10 +5,12 @@ from fastapi.staticfiles import StaticFiles
 from settings.database import Base, engine
 from account import routers as account_routers
 from post import routers as post_routers
+from authentication import routers as authentication_routers
 
 app = FastAPI()
 
 # routers
+app.include_router(authentication_routers.router)
 app.include_router(account_routers.router)
 app.include_router(post_routers.router)
 
