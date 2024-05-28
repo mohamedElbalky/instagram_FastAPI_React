@@ -10,8 +10,8 @@ from settings.database import get_db
 from authentication.oauth2 import get_current_user, oauth2_scheme
 from authentication.schemes import UserAuth
 
-from .crud import create, all, delete
-from .schemas import PostDsiplay, PostCreate
+from .crud import create_post, all_posts, delete_post, create_new_comment, get_all_comments
+from .schemas import PostDsiplay, PostCreate, CommentDisplay, CommentCreate
 
 
 router = APIRouter(prefix="/post", tags=["posts"])
@@ -33,7 +33,7 @@ def create_new_post(
             detail="Parameter image_url_type can onlt take values 'absolute' or 'relative'. ",
         )
 
-    return create(db=db, request=request)
+    return create_post(db=db, request=request, user_id=current_user.id)
 
 
 @router.get("", response_model=List[PostDsiplay])
@@ -42,10 +42,10 @@ def read_all_posts(
     limit: int = 3,
     db: Session = Depends(get_db),
 ):
-    return all(db=db, skip=skip, limit=limit)
+    return all_posts(db=db, skip=skip, limit=limit)
 
 
-@router.post("/image")
+@router.post("/image", status_code=status.HTTP_201_CREATED)
 def upload_image(
     image: UploadFile = File(...), current_user: UserAuth = Depends(get_current_user)
 ):
@@ -63,9 +63,19 @@ def upload_image(
 
     return {"filename": path}
 
-@router.delete("/{id}/delete")
-def delete_post(id:int, db: Session = Depends(get_db), current_user: UserAuth = Depends(get_current_user)):
+@router.delete("/{id}/delete", status_code=status.HTTP_204_NO_CONTENT)
+def remove_post(id:int, db: Session = Depends(get_db), current_user: UserAuth = Depends(get_current_user)):
     current_user_id = current_user.id
-    delete(db=db, id=id, user_id=current_user_id)
+    delete_post(db=db, id=id, user_id=current_user_id)
     return {"message": "post deleted successfully"}
     
+@router.post("/comment", status_code=status.HTTP_201_CREATED, response_model=CommentDisplay)
+def add_comment(request: CommentCreate, db: Session = Depends(get_db), current_user: UserAuth = Depends(get_current_user)):
+    comment = create_new_comment(db=db, request=request, user_id=current_user.id)
+    if not comment:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Data")
+    return comment
+
+@router.get("/{id}/comments", response_model=List[CommentDisplay])
+def read_comments(id:int, db: Session = Depends(get_db)):
+    return get_all_comments(db=db, post_id=id)

@@ -10,3 +10,5 @@ class DbUser(Base):
     password = Column(String)
     
     items = relationship('DbPost', back_populates='user')
+    
+    comments = relationship("DbComment", back_populates="user")

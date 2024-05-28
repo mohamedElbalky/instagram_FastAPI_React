@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 from settings.database import Base, engine
 from account import routers as account_routers
@@ -24,6 +25,22 @@ def root():
 
 # database
 Base.metadata.create_all(engine)
+
+
+
+# cors --> to run localhost:3000 with localhost:8000 without problems [in development only]
+
+origins = [
+    'http://localhost:3000'
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # mount static files
