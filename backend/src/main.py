@@ -31,7 +31,7 @@ Base.metadata.create_all(engine)
 # cors --> to run localhost:3000 with localhost:8000 without problems [in development only]
 
 origins = [
-    'http://localhost:3000'
+    'http://localhost:5173'
 ]
 
 app.add_middleware(

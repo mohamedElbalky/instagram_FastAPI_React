@@ -13,7 +13,7 @@ from .crud import create_user, get_all_users
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-# FIXME: Error when using this endpoint
+
 @router.get("", response_model=List[UserDisplay])
 def read_all_users(skip: int = 0, limit: int = 3, db: Session = Depends(get_db)):
     return get_all_users(db=db, skip=skip, limit=limit)

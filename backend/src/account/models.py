@@ -9,6 +9,6 @@ class DbUser(Base):
     email = Column(String)
     password = Column(String)
     
-    items = relationship('DbPost', back_populates='user')
+    posts = relationship('DbPost', back_populates='user')
     
     comments = relationship("DbComment", back_populates="user")
