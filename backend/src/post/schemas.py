@@ -28,6 +28,7 @@ class CommentUser(BaseModel):
         
 class PostComment(BaseModel):
     """For PostDsiplay"""
+    id: int
     text: str
     user: CommentUser
     timestamp: datetime

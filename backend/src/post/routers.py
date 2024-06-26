@@ -38,11 +38,11 @@ def create_new_post(
 
 @router.get("", response_model=List[PostDsiplay])
 def read_all_posts(
-    skip: int = 0,
-    limit: int = 3,
+    # skip: int = 0,
+    # limit: int = 3,
     db: Session = Depends(get_db),
 ):
-    return all_posts(db=db, skip=skip, limit=limit)
+    return all_posts(db=db)
 
 
 @router.post("/image", status_code=status.HTTP_201_CREATED)

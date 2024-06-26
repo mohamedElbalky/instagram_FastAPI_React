@@ -24,8 +24,8 @@ def create_post(db: Session, request: PostCreate, user_id:int):
     return new_post
 
 
-def all_posts(db: Session, skip: int = 0, limit: int = 3):
-    return db.query(DbPost).offset(skip).limit(limit).all()
+def all_posts(db: Session):
+    return db.query(DbPost).all()
 
 def delete_post(db: Session, id: str, user_id:int):
     post = db.query(DbPost).filter(DbPost.id == id).first()
