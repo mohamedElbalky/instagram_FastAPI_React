@@ -56,7 +56,7 @@ export default function Post({ post }) {
       </div>
       <img className="post_image" src={imgUrl} alt="" />
       <small className="created_time">
-        Created at: {formatTimestamp(post.timestamp)}
+        Created at: {() => formatTimestamp(post.timestamp)}
       </small>
       <h4 className="post_caption">{post.caption}</h4>
       {comments.length > 0 ? (
