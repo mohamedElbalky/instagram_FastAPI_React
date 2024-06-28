@@ -8,6 +8,9 @@ from .hashing import Hash
 
 def create_user(db: Session, request: UserCreate):
     """create a new user in database"""
+    
+    # TODO: handle if user already exists
+    
     new_user = DbUser(
         username=request.username,
         email=request.email,

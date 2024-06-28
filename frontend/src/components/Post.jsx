@@ -5,7 +5,7 @@ import { Avatar, Button } from "@mui/material";
 
 const BASE_URL = "http://localhost:8000/";
 
-export default function Post({ post }) {
+export default function Post({ post, authUserId, authToken }) {
   const [imgUrl, setImgUrl] = useState("");
   const [comments, setComments] = useState([]);
 
@@ -29,6 +29,28 @@ export default function Post({ post }) {
     );
   });
 
+  function handleDeletePost(post_id) {
+    const requestOptions = {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    };
+    fetch(BASE_URL + `post/${post_id}/delete`, requestOptions)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw response;
+      })
+      .then(response => {
+        console.log(response)
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
   // Helper function to format the timestamp
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
@@ -51,7 +73,11 @@ export default function Post({ post }) {
         <Avatar alt="Catalin" src="" />
         <div className="post_headerinfo">
           <h3>{post.user.username}</h3>
-          <Button className="post_delete">Delete</Button>
+          {post.user.id == authUserId ? (
+            <Button className="post_delete_btn" onClick={() => handleDeletePost(post.id)} variant="outlined" color="error">Delete</Button>
+          ) : (
+            ""
+          )}
         </div>
       </div>
       <img className="post_image" src={imgUrl} alt="" />
@@ -63,7 +89,7 @@ export default function Post({ post }) {
         <div className="post_comments">{commentsList}</div>
       ) : (
         <div className="post_comments">
-          <p style={{color: "#777"}}>No comments yet...</p>
+          <p style={{ color: "#777" }}>No comments yet...</p>
         </div>
       )}
     </div>
@@ -73,6 +99,7 @@ export default function Post({ post }) {
 // ------------------------------------
 Post.propTypes = {
   post: PropTypes.shape({
+    id: PropTypes.string.isRequired,
     caption: PropTypes.string.isRequired,
     image_url: PropTypes.string.isRequired,
     image_url_type: PropTypes.string.isRequired,
@@ -88,6 +115,7 @@ Post.propTypes = {
     ).isRequired,
     user: PropTypes.shape({
       username: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
 };

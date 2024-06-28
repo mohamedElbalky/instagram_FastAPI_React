@@ -119,6 +119,7 @@ html {
   flex: 1;
 }
 
+
 .modal_box {
   position: absolute;
   top: 50%;
@@ -127,6 +128,7 @@ html {
   background-color: white;
   width: 25rem;
   border: 2px solid #000;
+  border-radius: 5px;
   padding: 1.1rem;
   padding-bottom: 0;
 }
@@ -147,21 +149,22 @@ html {
 
 
 .modal_box .app_signin img {
-  width: 10rem;
+  width: 8rem;
   align-self: center;
 }
 
 @media (max-width:778px) {
   .modal_box .app_signin img {
-    width: 7rem;
+    width: 6rem;
   }
 }
 .modal_box .app_signin input {
   padding: .3rem;
   border: none;
-  border-bottom: 2px solid #000;
+  border-bottom: 2px solid #DDD;
   font-size: 1.1rem;
   transition: .5s;
+  caret-color: #1092ee;
 }
 
 @media (max-width:778px) {
@@ -176,7 +179,13 @@ html {
   border-bottom: 2px solid #1092ee;
 }
 
+.modal_box .app_signin input::placeholder {
+  color: #777;
+  text-transform: capitalize;
+}
+
 .modal_box .app_signin .signin_btn {
   width: fit-content;
   align-self: center;
 }
+
