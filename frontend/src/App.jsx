@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { Button, hexToRgb, Modal } from "@mui/material";
+import { Button, Modal } from "@mui/material";
 
 import Post from "./components/Post";
 
@@ -85,7 +85,7 @@ function App() {
   }, []);
 
   const postsList = posts.map((post) => {
-    return <Post post={post} key={post.id} authUserId={authUserId} authToken={authToken} />;
+    return <Post post={post} key={post.id} authUserId={authUserId} authToken={authToken} onDelete={onDelete} />;
   });
 
   function handleSignin(e) {
@@ -218,6 +218,33 @@ function App() {
     setAuthUserId("");
     setAuthUsername("");
   }
+
+
+  function onDelete(post_id) {
+    const requestOptions = {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    };
+    fetch(BASE_URL + `post/${post_id}/delete`, requestOptions)
+      .then(response => {
+        if (response.ok) {
+          return response.status;
+        }
+        throw response;
+      })
+      .then(response => {
+        // console.log(response)
+        // update react-dom
+        setPosts(posts.filter((post) => post.id !== post_id));
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
+
 
   return (
     <div className="app">

@@ -5,7 +5,7 @@ import { Avatar, Button } from "@mui/material";
 
 const BASE_URL = "http://localhost:8000/";
 
-export default function Post({ post, authUserId, authToken }) {
+export default function Post({ post, authUserId, onDelete }) {
   const [imgUrl, setImgUrl] = useState("");
   const [comments, setComments] = useState([]);
 
@@ -29,43 +29,27 @@ export default function Post({ post, authUserId, authToken }) {
     );
   });
 
-  function handleDeletePost(post_id) {
-    const requestOptions = {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    };
-    fetch(BASE_URL + `post/${post_id}/delete`, requestOptions)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw response;
-      })
-      .then(response => {
-        console.log(response)
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }
 
   // Helper function to format the timestamp
-  const formatTimestamp = (timestamp) => {
-    const date = new Date(timestamp);
-    const dateString = date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-    const timeString = date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-    return `${dateString} ${timeString}`;
-  };
+  // const formatTimestamp = (timestamp) => {
+  //   const date = new Date(timestamp);
+  //   const dateString = date.toLocaleDateString("en-US", {
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "numeric",
+  //   });
+  //   const timeString = date.toLocaleTimeString("en-US", {
+  //     hour: "2-digit",
+  //     minute: "2-digit",
+  //     second: "2-digit",
+  //   });
+  //   return `${dateString} ${timeString}`;
+  // };
+
+
+  function handleDeletePost() {
+    onDelete(post.id)
+  }
 
   return (
     <div className="post">
@@ -74,7 +58,7 @@ export default function Post({ post, authUserId, authToken }) {
         <div className="post_headerinfo">
           <h3>{post.user.username}</h3>
           {post.user.id == authUserId ? (
-            <Button className="post_delete_btn" onClick={() => handleDeletePost(post.id)} variant="outlined" color="error">Delete</Button>
+            <Button className="post_delete_btn" onClick={handleDeletePost} variant="outlined" color="error">Delete</Button>
           ) : (
             ""
           )}
@@ -82,7 +66,7 @@ export default function Post({ post, authUserId, authToken }) {
       </div>
       <img className="post_image" src={imgUrl} alt="" />
       <small className="created_time">
-        Created at: {() => formatTimestamp(post.timestamp)}
+        Created at: {post.timestamp}
       </small>
       <h4 className="post_caption">{post.caption}</h4>
       {comments.length > 0 ? (
@@ -99,7 +83,7 @@ export default function Post({ post, authUserId, authToken }) {
 // ------------------------------------
 Post.propTypes = {
   post: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
     caption: PropTypes.string.isRequired,
     image_url: PropTypes.string.isRequired,
     image_url_type: PropTypes.string.isRequired,
@@ -115,7 +99,10 @@ Post.propTypes = {
     ).isRequired,
     user: PropTypes.shape({
       username: PropTypes.string.isRequired,
-      id: PropTypes.string.isRequired,
+      id: PropTypes.number.isRequired,
     }).isRequired,
   }).isRequired,
+  authUserId: PropTypes.number,
+  authToken: PropTypes.string,
+  onDelete: PropTypes.func,
 };
