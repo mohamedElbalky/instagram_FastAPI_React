@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import { Button, Modal } from "@mui/material";
 
 import Post from "./components/Post";
+import Footer from "./components/Footer";
+
+import ImageUpload from "./components/ImageUpload";
 
 const BASE_URL = "http://localhost:8000/";
 
@@ -25,8 +28,8 @@ function App() {
   // token data
   const [authToken, setAuthToken] = useState(null);
   const [authTokenType, setAuthTokenType] = useState(null);
-  const [authUserId, setAuthUserId] = useState("");
-  const [authUsername, setAuthUsername] = useState("");
+  const [authUserId, setAuthUserId] = useState(null);
+  const [authUsername, setAuthUsername] = useState(null);
 
   // get data from local storage if page is refresh
   useEffect(() => {
@@ -85,7 +88,15 @@ function App() {
   }, []);
 
   const postsList = posts.map((post) => {
-    return <Post post={post} key={post.id} authUserId={authUserId} authToken={authToken} onDelete={onDelete} />;
+    return (
+      <Post
+        post={post}
+        key={post.id}
+        authUserId={authUserId}
+        authToken={authToken}
+        onDelete={onDelete}
+      />
+    );
   });
 
   function handleSignin(e) {
@@ -164,7 +175,6 @@ function App() {
       });
   }
 
-
   function handleSignup(e) {
     e?.preventDefault();
 
@@ -193,7 +203,7 @@ function App() {
           // console.log(data);
 
           // login by new user
-          loginAfterSignUp()
+          loginAfterSignUp();
 
           // clean form
           setSignupForm({ username: "", email: "", password: "" });
@@ -219,7 +229,6 @@ function App() {
     setAuthUsername("");
   }
 
-
   function onDelete(post_id) {
     const requestOptions = {
       method: "DELETE",
@@ -228,23 +237,22 @@ function App() {
       },
     };
     fetch(BASE_URL + `post/${post_id}/delete`, requestOptions)
-      .then(response => {
+      .then((response) => {
         if (response.ok) {
           return response.status;
         }
         throw response;
       })
-      .then(response => {
+      .then((response) => {
         // console.log(response)
+
         // update react-dom
         setPosts(posts.filter((post) => post.id !== post_id));
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
   }
-
-
 
   return (
     <div className="app">
@@ -367,6 +375,17 @@ function App() {
       {/* end header section */}
 
       <div className="app_posts">{postsList}</div>
+
+      {authToken ? (
+        <div className="upload_box">
+          <ImageUpload authToken={authToken} authTokenType={authTokenType}/>
+        </div>
+      ) : (
+        <div className="upload_box">
+          <h3>You need to login to upload</h3>
+        </div>
+      )}
+      <Footer/>
     </div>
   );
 }

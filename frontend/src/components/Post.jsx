@@ -1,13 +1,19 @@
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { Avatar, Button } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
+
+
 
 const BASE_URL = "http://localhost:8000/";
 
-export default function Post({ post, authUserId, onDelete }) {
+export default function Post({ post, authUserId, authToken, onDelete }) {
   const [imgUrl, setImgUrl] = useState("");
   const [comments, setComments] = useState([]);
+
+  const [commentInput, setCommentInput] = useState("");
 
   useEffect(() => {
     if (post.image_url_type === "absolute") {
@@ -29,6 +35,38 @@ export default function Post({ post, authUserId, onDelete }) {
     );
   });
 
+  const handleAddComment = (e) => {
+    e.preventDefault();
+    if (commentInput.trim() !== "") {
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({
+          text: commentInput,
+          post_id: post.id,
+        }),
+      };
+
+      fetch(BASE_URL + `post/comment`, requestOptions)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw response;
+        })
+        .then((data) => {
+          console.log(data);
+          setComments([...comments, data]);
+          setCommentInput("");
+        })
+        .catch((error) => console.error("Error:", error));
+    } else {
+      alert("Please enter a comment");
+    }
+  };
 
   // Helper function to format the timestamp
   // const formatTimestamp = (timestamp) => {
@@ -46,9 +84,8 @@ export default function Post({ post, authUserId, onDelete }) {
   //   return `${dateString} ${timeString}`;
   // };
 
-
   function handleDeletePost() {
-    onDelete(post.id)
+    onDelete(post.id);
   }
 
   return (
@@ -58,24 +95,55 @@ export default function Post({ post, authUserId, onDelete }) {
         <div className="post_headerinfo">
           <h3>{post.user.username}</h3>
           {post.user.id == authUserId ? (
-            <Button className="post_delete_btn" onClick={handleDeletePost} variant="outlined" color="error">Delete</Button>
+            <DeleteForeverIcon
+              className="post_delete_btn"
+              onClick={handleDeletePost}
+              variant="outlined"
+              color="error"
+            >
+              Delete
+            </DeleteForeverIcon>
           ) : (
             ""
           )}
         </div>
       </div>
       <img className="post_image" src={imgUrl} alt="" />
-      <small className="created_time">
-        Created at: {post.timestamp}
-      </small>
+      <small className="created_time">Created at: {post.timestamp}</small>
       <h4 className="post_caption">{post.caption}</h4>
       {comments.length > 0 ? (
         <div className="post_comments">{commentsList}</div>
       ) : (
-        <div className="post_comments">
-          <p style={{ color: "#777" }}>No comments yet...</p>
+        <div className="post_comments" style={{ color: "#777" }}>
+          <p>No comments yet...</p>
         </div>
       )}
+      {authToken ? (
+        <div className="post_comments">
+          <form action="" className="comment_form" onSubmit={handleAddComment}>
+            <input
+              type="text"
+              placeholder="add comment..."
+              value={commentInput}
+              onChange={(e) => setCommentInput(e.target.value)}
+            />
+            <SendIcon
+              type="submit"
+              variant="outlined"
+              size="small"
+              color="success"
+              className="add_comment_btn"
+              onClick={handleAddComment}
+            >
+              post
+            </SendIcon>
+          </form>
+        </div>
+      ) : (
+        ""
+      )}
+
+
     </div>
   );
 }

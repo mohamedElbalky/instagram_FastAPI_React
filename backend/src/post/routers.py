@@ -11,7 +11,7 @@ from authentication.oauth2 import get_current_user, oauth2_scheme
 from authentication.schemes import UserAuth
 
 from .crud import create_post, all_posts, delete_post, create_new_comment, get_all_comments
-from .schemas import PostDsiplay, PostCreate, CommentDisplay, CommentCreate
+from .schemas import PostDsiplay, PostCreate, CommentDisplay, CommentCreate, PostComment
 
 
 router = APIRouter(prefix="/post", tags=["posts"])
@@ -69,7 +69,7 @@ def remove_post(id:int, db: Session = Depends(get_db), current_user: UserAuth = 
     delete_post(db=db, id=id, user_id=current_user_id)
     return {"message": "post deleted successfully"}
     
-@router.post("/comment", status_code=status.HTTP_201_CREATED, response_model=CommentDisplay)
+@router.post("/comment", status_code=status.HTTP_201_CREATED, response_model=PostComment)
 def add_comment(request: CommentCreate, db: Session = Depends(get_db), current_user: UserAuth = Depends(get_current_user)):
     comment = create_new_comment(db=db, request=request, user_id=current_user.id)
     if not comment:
