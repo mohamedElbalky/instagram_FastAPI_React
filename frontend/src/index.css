@@ -31,6 +31,7 @@ html {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    /* gap:2rem; */
     padding: 5px;
     background-color: white;
     border-bottom: 1px solid lightgray;
@@ -42,8 +43,23 @@ html {
     z-index: 999;
 }
 
+.app_header .user_info {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 0.3rem;
+
+}
+
+.app_header .user_info .header_user_avatar {
+
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+}
+
 .app_header .app_header_image {
     height: 100%;
+    /* flex: 1; */
 }
 
 .app_header .app_header_image img {
@@ -94,6 +110,16 @@ html {
     font-size: .9rem;
     padding: .5rem 1.1rem;
     /* border-bottom: 1px solid lightgray; */
+    text-align: justify;
+    transition: max-height 0.5s ease-out,
+}
+
+.post .post_caption .see_more_link {
+    font-size: .9rem;
+    margin-left: 5px;
+    text-transform: lowercase;
+    color: #1976d2;
+    cursor: pointer;
 }
 
 .post .created_time {
@@ -108,7 +134,7 @@ html {
     padding: 0.7rem 1.1rem;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.3rem;
 }
 
 .post .post_comments > p {

@@ -2,11 +2,12 @@ import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { Avatar, Button } from "@mui/material";
+import { Avatar,  } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import Link from "@mui/material/Link";
 
 import TimeSinceComponent from "./TimeSinceComponent";
+import SeeMoreText from "./SeeMoreText";
 
 const BASE_URL = "http://localhost:8000/";
 
@@ -37,7 +38,8 @@ export default function Post({ post, authUserId, authToken, onDelete }) {
       <div key={comment.id} className="comment_box">
         <Link underline="none" href="#" className="user_profile_link">
           <Avatar className="user_avatar" alt="Catalin" src="" />
-          <p>{comment.user.username}:</p>
+          <p>{comment.user.username.substring(0,20)}:</p>
+          
         </Link>
         <p>{comment.text}</p>
       </div>
@@ -115,7 +117,8 @@ export default function Post({ post, authUserId, authToken, onDelete }) {
         </div>
       </div>
       <img className="post_image" src={imgUrl} alt="" />
-      <h4 className="post_caption">{post.caption}</h4>
+      {/* <h4 className="post_caption">{post.caption}</h4> */}
+      <SeeMoreText text={post.caption} maxLength={120} />
       <small className="created_time">
         <TimeSinceComponent date={postTimeStamp} />
       </small>

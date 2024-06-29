@@ -7,6 +7,7 @@ import Post from "./components/Post";
 import Footer from "./components/Footer";
 
 import ImageUpload from "./components/ImageUpload";
+import { Avatar } from "@mui/material";
 
 const BASE_URL = "http://localhost:8000/";
 
@@ -52,8 +53,6 @@ function App() {
   // if (!openSignIn) {
   //   return null;
   // }
-
-
 
   // get data from local storage if page is refresh
   useEffect(() => {
@@ -284,7 +283,6 @@ function App() {
       });
   }
 
-
   return (
     <div className="app">
       {/* start modal section */}
@@ -361,7 +359,7 @@ function App() {
               ""
             )}
             <input
-            ref={inputRef}
+              ref={inputRef}
               type="text"
               placeholder="username"
               value={signupForm.username}
@@ -403,6 +401,7 @@ function App() {
         {authToken ? (
           <>
             <div className="user_info">
+              <Avatar className="header_user_avatar" alt="Catalin" src="" />
               <p>{authUsername}</p>
             </div>
             <Button onClick={() => handleLogOut()}>Logout</Button>
