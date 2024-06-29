@@ -130,8 +130,7 @@ export default function ImageUpload({ authToken, authTokenType }) {
         </div>
       </Modal>
 
-      {/* <Button onClick={() => setOpen(true)}>Upload Image</Button> */}
-      <Button variant="outlined" size="small" onClick={() => setOpen(true)}>
+      <Button variant="outlined"  className="app_post_btn"  size="small" onClick={() => setOpen(true)}>
         Add Post
       </Button>
     </div>
