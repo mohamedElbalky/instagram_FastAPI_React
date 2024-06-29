@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { Button, Modal } from "@mui/material";
+import Alert from "@mui/material/Alert";
 
 import Post from "./components/Post";
 import Footer from "./components/Footer";
@@ -10,6 +11,8 @@ import ImageUpload from "./components/ImageUpload";
 const BASE_URL = "http://localhost:8000/";
 
 function App() {
+  const inputRef = useRef(null);
+
   // data
   const [posts, setPosts] = useState([]);
 
@@ -30,6 +33,27 @@ function App() {
   const [authTokenType, setAuthTokenType] = useState(null);
   const [authUserId, setAuthUserId] = useState(null);
   const [authUsername, setAuthUsername] = useState(null);
+
+  // ahndle errors
+  const [errorAlert, setErrorAlert] = useState("");
+
+  // validate email address
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  useEffect(() => {
+    if (openSignIn == true && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [openSignIn]);
+
+  // if (!openSignIn) {
+  //   return null;
+  // }
+
+
 
   // get data from local storage if page is refresh
   useEffect(() => {
@@ -102,7 +126,7 @@ function App() {
   function handleSignin(e) {
     e?.preventDefault();
 
-    if (signinForm.username != "" && signinForm.password != "") {
+    if (signinForm.username.trim() != "" && signinForm.password.trim() != "") {
       let formData = new FormData();
       formData.append("username", signinForm.username);
       formData.append("password", signinForm.password);
@@ -127,62 +151,69 @@ function App() {
 
           // clear form fields
           setSigninForm({ username: "", password: "" });
+
+          // reset alert
+          setErrorAlert("");
+
+          // close modal
+          setOpenSignIn(false);
         })
         .catch((err) => {
-          console.error(err);
-          // TODO: handle failed login
-          alert("Error");
+          setErrorAlert("Invalid username or password, please try again");
         });
-
-      setOpenSignIn(false);
     } else {
-      // TODO: handle failed login
-      console.log("invalid data from SignIn");
+      setErrorAlert("Please enter your username and password");
     }
   }
 
   // loging automatically after signup
   function loginAfterSignUp() {
-    let formData = new FormData();
-    formData.append("username", signupForm.username);
-    formData.append("password", signupForm.password);
+    if (signupForm.username.trim() != "" && signupForm.password.trim() != "") {
+      let formData = new FormData();
+      formData.append("username", signupForm.username);
+      formData.append("password", signupForm.password);
 
-    const requestOptions = {
-      method: "POST",
-      body: formData,
-    };
+      const requestOptions = {
+        method: "POST",
+        body: formData,
+      };
 
-    fetch(BASE_URL + "login", requestOptions)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw response;
-      })
-      .then((data) => {
-        setAuthToken(data.access_token);
-        setAuthTokenType(data.token_type);
-        setAuthUserId(data.user_id);
-        setAuthUsername(data.username);
+      fetch(BASE_URL + "login", requestOptions)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw response;
+        })
+        .then((data) => {
+          setAuthToken(data.access_token);
+          setAuthTokenType(data.token_type);
+          setAuthUserId(data.user_id);
+          setAuthUsername(data.username);
 
-        // clear form fields
-        setSigninForm({ username: "", password: "" });
-      })
-      .catch((err) => {
-        console.error(err);
-        // TODO: handle failed login
-        alert("Error");
-      });
+          // clear form fields
+          setSigninForm({ username: "", password: "" });
+        })
+        .catch((err) => {
+          setErrorAlert("Error occurred, Please try again");
+        });
+    } else {
+      setErrorAlert("Invalid data from SignUp");
+    }
   }
 
   function handleSignup(e) {
     e?.preventDefault();
 
     if (
-      signupForm.username != "" &&
-      signupForm.password != "" &&
-      signupForm.email != ""
+      signupForm.username.trim() != "" &&
+      signupForm.password.trim() != "" &&
+      signupForm.email.trim() != ""
     ) {
+      if (!validateEmail(signupForm.email)) {
+        setErrorAlert("Please enter a valid email address");
+        return;
+      }
       const json_strings = JSON.stringify(signupForm);
       let requestOptions = {
         method: "POST",
@@ -200,25 +231,24 @@ function App() {
           throw response;
         })
         .then((data) => {
-          // console.log(data);
-
           // login by new user
           loginAfterSignUp();
 
           // clean form
           setSignupForm({ username: "", email: "", password: "" });
+          setSigninForm({ username: "", password: "" });
+
+          // reset alert
+          setErrorAlert("");
+
+          // close modal
+          setOpenSignUp(false);
         })
         .catch((err) => {
-          console.error(err);
-          // TODO: handle failed signup
-          alert("Error");
+          setErrorAlert("Error occurred, please try again");
         });
-
-      // close modal
-      setOpenSignUp(false);
     } else {
-      // TODO: handle failed signup
-      console.log("invalid data from signUp");
+      setErrorAlert("Please fill all fields below");
     }
   }
 
@@ -254,6 +284,7 @@ function App() {
       });
   }
 
+
   return (
     <div className="app">
       {/* start modal section */}
@@ -274,8 +305,15 @@ function App() {
             <center>
               <img src="logo.png" alt="logo" className="app_signin_image" />
             </center>
+            {errorAlert ? (
+              <Alert variant="outlined" severity="error">
+                {errorAlert}
+              </Alert>
+            ) : (
+              ""
+            )}
             <input
-              required
+              ref={inputRef}
               type="text"
               placeholder="username"
               value={signinForm.username}
@@ -284,7 +322,6 @@ function App() {
               }
             />
             <input
-              required
               type="password"
               placeholder="password"
               value={signinForm.password}
@@ -293,7 +330,7 @@ function App() {
               }
             />
 
-            <Button type="submit" className="signin_btn">
+            <Button type="submit" className="signin_btn" onClick={handleSignin}>
               SignIn
             </Button>
           </form>
@@ -316,8 +353,15 @@ function App() {
             <center>
               <img src="logo.png" alt="logo" className="app_signin_image" />
             </center>
+            {errorAlert ? (
+              <Alert variant="outlined" severity="error">
+                {errorAlert}
+              </Alert>
+            ) : (
+              ""
+            )}
             <input
-              required
+            ref={inputRef}
               type="text"
               placeholder="username"
               value={signupForm.username}
@@ -326,7 +370,6 @@ function App() {
               }
             />
             <input
-              required
               type="email"
               placeholder="email"
               value={signupForm.email}
@@ -335,7 +378,6 @@ function App() {
               }
             />
             <input
-              required
               type="password"
               placeholder="password"
               value={signupForm.password}
@@ -344,7 +386,7 @@ function App() {
               }
             />
 
-            <Button type="submit" className="signin_btn">
+            <Button type="submit" className="signin_btn" onClick={handleSignup}>
               SignUp
             </Button>
           </form>
@@ -378,14 +420,14 @@ function App() {
 
       {authToken ? (
         <div className="upload_box">
-          <ImageUpload authToken={authToken} authTokenType={authTokenType}/>
+          <ImageUpload authToken={authToken} authTokenType={authTokenType} />
         </div>
       ) : (
         <div className="upload_box">
           <h3>You need to login to upload</h3>
         </div>
       )}
-      <Footer/>
+      <Footer />
     </div>
   );
 }

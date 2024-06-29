@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { Button, Modal } from "@mui/material";
+import Alert from '@mui/material/Alert';
 
 const BASE_URL = "http://localhost:8000/";
 
-export default function ImageUpload({
-  authToken,
-  authTokenType,
-}) {
+export default function ImageUpload({ authToken, authTokenType }) {
   const [open, setOpen] = useState(false);
 
   const [postForm, setPostForm] = useState({ caption: "", image: null });
+  const [errorAlert, setErrorAlert] = useState("")
 
   function handleUplaodingImage(e) {
     console.log(e.target.files);
@@ -21,36 +20,37 @@ export default function ImageUpload({
   function handleUplaod(e) {
     e?.preventDefault();
 
-    const formData = new FormData();
-    formData.append("image", postForm.image);
+    if (postForm.caption.trim() != "") {
+      const formData = new FormData();
+      formData.append("image", postForm.image);
 
-    const requestOptions = {
-      method: "POST",
-      headers: {
-        Authorization: `${authTokenType} ${authToken}`,
-      },
-      body: formData,
-    };
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          Authorization: `${authTokenType} ${authToken}`,
+        },
+        body: formData,
+      };
 
-    fetch(BASE_URL + "post/image", requestOptions)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw response;
-      })
-      .then((data) => {
-        // console.log(data);
+      fetch(BASE_URL + "post/image", requestOptions)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw response;
+        })
+        .then((data) => {
+          addNewPost(data.filename);
 
-        //
-        addNewPost(data.filename);
-
-        setOpen(false);
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {});
+          setOpen(false);
+        })
+        .catch((error) => {
+          // TODO: handle error
+          setErrorAlert("Please Choose an image");
+        });
+    } else {
+      setErrorAlert("Please enter a caption");
+    }
   }
 
   function addNewPost(image_filename) {
@@ -81,6 +81,7 @@ export default function ImageUpload({
         window.scrollTo(0, 0);
       })
       .catch((error) => {
+        // TODO: handle error
         console.error(error);
       })
       .finally(() => {
@@ -88,17 +89,25 @@ export default function ImageUpload({
       });
   }
 
+  function closeModal() {
+    setOpen(false)
+    setPostForm({ caption: "", image: null });
+    setErrorAlert("")
+  }
+
   return (
     <div>
       <Modal
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={() => closeModal()}
         aria-labelledby="modal-title"
         aria-describedby="modal-description"
       >
         <div className="modal_box">
+          {errorAlert ? <Alert variant="outlined" severity="error">{errorAlert}</Alert>: ""}
           <form action="" className="app_signin">
-            <input
+            <textarea
+              rows="3"
               required
               type="text"
               placeholder="Enter a caption..."
@@ -106,10 +115,10 @@ export default function ImageUpload({
               onChange={(e) =>
                 setPostForm({ ...postForm, caption: e.target.value })
               }
-            />
+            ></textarea>
             <input required type="file" onChange={handleUplaodingImage} />
             <Button
-              variant="contained"
+              variant="outlined"
               color="success"
               size="small"
               className="signin_btn"

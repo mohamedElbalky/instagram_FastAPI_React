@@ -3,9 +3,10 @@
     box-sizing: border-box;
 }
 
-input {
+input, textarea {
     outline: none;
     /* border: none; */
+    resize: none;
 }
 
 html {
@@ -87,24 +88,31 @@ html {
     border-bottom: 1px solid lightgray;
 }
 
-.post .created_time {
-    padding: 1.1rem;
-    color: #434343;
-    font-size: 0.7rem;
-}
 
 .post .post_caption {
     font-weight: normal;
-    font-size: 1.3rem;
-    padding: 1.1rem;
-    border-bottom: 1px solid lightgray;
+    font-size: .9rem;
+    padding: .5rem 1.1rem;
+    /* border-bottom: 1px solid lightgray; */
 }
 
+.post .created_time {
+    display: block;
+    padding: .3rem 1.1rem;
+    padding-bottom: .5rem;
+    color: #434343;
+    font-size: 0.8rem;
+    border-bottom: 1px solid lightgray; 
+}
 .post .post_comments {
     padding: 0.7rem 1.1rem;
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.post .post_comments > p {
+    font-size: .8rem;
 }
 
 .post .post_comments .comment_form {
@@ -113,7 +121,33 @@ html {
     gap: 10px;
 }
 
-.post .post_comments p {
+.post .post_comments .comment_box {
+    display: flex;
+    align-items: flex-start;
+    gap: .3rem;
+}
+
+.post .post_comments .comment_box .user_profile_link {
+    display: flex;
+    align-items: flex-start;
+    gap: .3rem;
+}
+
+.post .post_comments .comment_box .user_avatar {
+    width: 1.1rem;
+    height: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.post .post_comments .comment_box .user_profile_link p {
+    font-weight: bold;
+    color: #1976d2;
+}
+
+.post .post_comments .comment_box p {
     font-size: 0.8rem;
     font-weight: 500;
     color: #434343;
@@ -149,6 +183,10 @@ html {
     gap: 10px;
 }
 
+.post .post_header .post_user_avatar {
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+}
 .post .post_header .post_headerinfo {
     display: flex;
     justify-content: space-between;
@@ -156,10 +194,20 @@ html {
     flex: 1;
 }
 
-.post .post_delete_btn {
-    cursor: pointer;
+
+
+.post .post_header .post_headerinfo h3 {
+    font-size: .9rem;
 }
 
+.post .post_delete_btn {
+    cursor: pointer;
+    transition: .5s;
+}
+
+.post .post_delete_btn:hover {
+    transform: scale(110%, 110%);
+}
 
 
 .modal_box {
@@ -199,7 +247,7 @@ html {
         width: 6rem;
     }
 }
-.modal_box .app_signin input {
+.modal_box .app_signin input, textarea {
     padding: 0.3rem;
     border: none;
     border-bottom: 2px solid #ddd;
