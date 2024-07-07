@@ -1,7 +1,8 @@
 # Simple Instagram Clone
 This project is a simple Instagram-like application built using FastAPI for the backend and React for the frontend. The application allows users to sign up, log in, post images, view posts, and comment on posts.
 
-[instagram-clone.webm](https://github.com/mohamedElbalky/instagram_FastAPI_React/assets/68825346/63062555-dc2a-414c-a13f-d2bb0bc4550f)
+
+https://github.com/mohamedElbalky/instagram_FastAPI_React/assets/68825346/1f0ca5db-8ee3-4214-95a3-bead62e745f5
 
 
 
