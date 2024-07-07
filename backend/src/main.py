@@ -3,10 +3,10 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-from settings.database import Base, engine
-from account import routers as account_routers
-from post import routers as post_routers
-from authentication import routers as authentication_routers
+from .settings.database import Base, engine
+from .account import routers as account_routers
+from .post import routers as post_routers
+from .authentication import routers as authentication_routers
 
 app = FastAPI()
 
@@ -31,7 +31,8 @@ Base.metadata.create_all(engine)
 # cors --> to run localhost:3000 with localhost:8000 without problems [in development only]
 
 origins = [
-    'http://localhost:5173'
+    # 'http://localhost:3000'
+    "*"
 ]
 
 app.add_middleware(
@@ -44,10 +45,6 @@ app.add_middleware(
 
 
 # mount static files
-app.mount("/images", StaticFiles(directory="images"), name="images")
+app.mount("/src/images", StaticFiles(directory="src/images"), name="images")
 
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
-    

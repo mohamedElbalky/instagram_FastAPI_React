@@ -11,9 +11,10 @@ export default function ImageUpload({ authToken, authTokenType }) {
   const [errorAlert, setErrorAlert] = useState("")
 
   function handleUplaodingImage(e) {
-    console.log(e.target.files);
+    console.log(e.target.files[0]);
     if (e.target.files[0]) {
       setPostForm({ ...postForm, image: e.target.files[0] });
+      console.log(postForm)
     }
   }
 
@@ -46,7 +47,7 @@ export default function ImageUpload({ authToken, authTokenType }) {
         })
         .catch((error) => {
           // TODO: handle error
-          setErrorAlert("Please Choose an image");
+          setErrorAlert("Please Choose an image!!!!");
         });
     } else {
       setErrorAlert("Please enter a caption");

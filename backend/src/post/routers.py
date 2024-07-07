@@ -2,19 +2,23 @@ from typing import List
 import string
 import random
 import shutil
+from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm.session import Session
 
-from settings.database import get_db
-from authentication.oauth2 import get_current_user, oauth2_scheme
-from authentication.schemes import UserAuth
+from ..settings.database import get_db
+from ..authentication.oauth2 import get_current_user, oauth2_scheme
+from ..authentication.schemes import UserAuth
 
 from .crud import create_post, all_posts, delete_post, create_new_comment, get_all_comments
 from .schemas import PostDsiplay, PostCreate, CommentDisplay, CommentCreate, PostComment
 
 
 router = APIRouter(prefix="/post", tags=["posts"])
+
+
+
 
 
 IMAGE_URL_TYPES: list[str] = ["absolute", "relative"]
@@ -44,6 +48,9 @@ def read_all_posts(
 ):
     return all_posts(db=db)
 
+# Ensure the images directory exists
+images_dir = Path("src/images")
+images_dir.mkdir(parents=True, exist_ok=True)
 
 @router.post("/image", status_code=status.HTTP_201_CREATED)
 def upload_image(
@@ -56,7 +63,7 @@ def upload_image(
 
     filename = new.join(image.filename.rsplit(".", 1))
 
-    path = f"images/{filename}"
+    path = images_dir / filename
 
     with open(path, "w+b") as buffer:
         shutil.copyfileobj(image.file, buffer)

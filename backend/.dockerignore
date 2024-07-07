@@ -71,9 +71,12 @@ docs/_build/
 target/
 
 # Virtual environment
-.env
+.env/
 .venv/
 venv/
+
+.env
+.ENV
 
 # PyCharm
 .idea
@@ -88,3 +91,5 @@ venv/
 # VS Code
 .vscode/
 
+./src/.env
+./src/.ENV

@@ -222,7 +222,7 @@ function App() {
         body: json_strings,
       };
 
-      fetch(BASE_URL + "users/", requestOptions)
+      fetch(BASE_URL + "signup", requestOptions)
         .then((response) => {
           if (response.ok) {
             return response.json();

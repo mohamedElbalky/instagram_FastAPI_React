@@ -164,7 +164,7 @@ cython_debug/
 
 
 # upload image folder
-backend/src/images
+backend/src/images/*
 
 
 # ------------- react -------------------------

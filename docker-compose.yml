@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+    backend:
+        image: backend
+        container_name: backend
+        build:
+            context: ./backend/
+            dockerfile: Dockerfile
+        command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+        volumes:
+            - images:/app/src/images
+        environment:
+            - DATABASE_URL=postgresql://postgres:user123@db:5432/instagramdb
+            - SECRET_KEY="43f50d4ee55b83d0278fdf62c844096a8867ccf7f5205b426abca000b84cf3c7"
+            - ALGORITHM=HS256
+            - ACCESS_TOKEN_EXPIRE_MINUTES=360
+        depends_on:
+            - db
+        ports:
+            - 8000:8000
+        networks:
+            - backend
+
+
+    db:
+        image: postgres:16-alpine
+        restart: always
+        container_name: db
+        expose:
+            - 5432
+        volumes:
+            - pgdata:/var/lib/postgresql/data 
+        environment:
+            - POSTGRES_DB=instagramdb
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=user123
+        networks:
+            - backend
+
+    frontend:
+        image: frontend
+        container_name: frontend
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        environment:
+            - NODE_ENV=production
+        ports:
+            - 3000:3000
+        networks:
+            - backend
+        command: [ "serve", "-s", "dist" ]
+
+volumes:
+    pgdata:
+    images:
+networks:
+    backend:
+

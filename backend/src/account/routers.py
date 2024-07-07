@@ -4,10 +4,9 @@ from fastapi import APIRouter, Depends, status, HTTPException
 
 from sqlalchemy.orm import Session
 
-from settings.database import get_db
-
+from ..settings.database import get_db
 from .schemas import UserCreate, UserDisplay
-from .crud import create_user, get_all_users
+from .crud import create_user, get_all_users, delete_user
 
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -19,10 +18,9 @@ def read_all_users(skip: int = 0, limit: int = 3, db: Session = Depends(get_db))
     return get_all_users(db=db, skip=skip, limit=limit)
 
 
-@router.post("", response_model=UserDisplay, status_code=status.HTTP_201_CREATED)
-def create_new_user(request: UserCreate, db: Session = Depends(get_db)):
-    user = create_user(db=db, request=request)
 
-    if user:
-        return user
-    return HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Data")
+
+@router.delete("{user_id}/")
+def remove_user(user_id:str, db: Session = Depends(get_db)):
+    delete_user(db=db, user_id=user_id)
+    return {"message": "User deleted successfully"}

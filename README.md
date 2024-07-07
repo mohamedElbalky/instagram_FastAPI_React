@@ -1,6 +1,8 @@
 # Simple Instagram Clone
 This project is a simple Instagram-like application built using FastAPI for the backend and React for the frontend. The application allows users to sign up, log in, post images, view posts, and comment on posts.
 
+
+
 ### Features
 - User Authentication (Sign up, Log in, Log out)
 - Post Images
@@ -14,10 +16,12 @@ This project is a simple Instagram-like application built using FastAPI for the 
 - JWT (Json Web Token)
 - Other Tools: Docker (for containerization)
 
+---
 
+## Setup
 ### Getting Started
-- Python 3.8+
-- Node.js 14+
+- Python
+- Node.js
 - Docker (optional, for containerization)
 
 ### Backend Setup
@@ -29,10 +33,14 @@ This project is a simple Instagram-like application built using FastAPI for the 
     - `source venv/bin/activate`
 3. Install the dependencies:
     - `pip install -r requirements.txt`
-4. Run the FastAPI server:
-    - `cd src/`
-    - `python main.py`
-5. To open Endpoints Documentation
+4. Create **.env** file and add environment variables from **.ENV** file.
+    - Generate **SECRET_KEY**:
+        - In Linux: `openssl rand -base64 64`
+    - Add **POSTGRES_DATABASE_URL**:
+        - *postgresql://USER_NAME:USER_PASSWORD@localhost:5432/DATABASE_NAME*
+5. Run the FastAPI server:
+    - `uvicorn src.main:app --reload`
+6. To open Endpoints Documentation
     - Open in Browser: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) 
 
 ### Frontend Setup
@@ -47,28 +55,6 @@ This project is a simple Instagram-like application built using FastAPI for the 
 
 ### Running with Docker
 - Build and run the Docker containers:
+    - `git clone git@github.com:mohamedElbalky/instagram_FastAPI_React.git`
     - `docker-compose up --build`
 
-
-### Images
-<div style="display: flex; gap:10px">
-    <div>
-        <h4>register: </h4>
-        <img src="./README_images/register.png" width="500" />
-    </div>
-    <div>
-        <h4>Login: </h4>
-        <img src="./README_images/login_page.png" width="500" />
-    </div>
-</div>
-
-<div style="display: flex; gap:10px">
-    <div>
-        <h4>Main: </h4>
-        <img src="./README_images/main_page.png" width="500" />
-    </div>
-    <div>
-        <h4>Add post: </h4>
-        <img src="./README_images/add_post.png" width="500" />
-    </div>
-</div>

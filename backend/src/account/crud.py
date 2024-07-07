@@ -8,8 +8,20 @@ from .hashing import Hash
 
 def create_user(db: Session, request: UserCreate):
     """create a new user in database"""
+
+    user = db.query(DbUser).filter(DbUser.username == request.username).first()
+    if user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already exists",
+        )
     
-    # TODO: handle if user already exists
+    user = db.query(DbUser).filter(DbUser.email == request.email).first()
+    if user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already exists",
+        )
     
     new_user = DbUser(
         username=request.username,
@@ -23,6 +35,19 @@ def create_user(db: Session, request: UserCreate):
 
     return new_user
 
+
+def delete_user(db: Session, user_id: str):
+    """delete user by id"""
+    user = db.query(DbUser).filter(DbUser.id == user_id).first()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id {user_id} not found",
+        )
+    
+    db.delete(user)
+    db.commit()
 
 def get_all_users(db: Session, skip: int = 0, limit: int = 3):
     """return all user by skip and limit"""
